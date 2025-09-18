@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #000;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .error-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .error-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: filter 0.7s ease;
+        }
+        
+        .clover-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.7s ease;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            pointer-events: none;
+            transition: background-color 0.7s ease;
+        }
+        
+        .modal-text {
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.7s ease;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container" id="errorContainer">
+        <img src="404_error.jpg" alt="Ошибка 404 - Страница не найдена" class="error-image" id="errorImage">
+        <img src="clover2.png" alt="Секретная кнопка" class="clover-button" id="cloverButton">
+    </div>
+    
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-text" id="modalText"></div>
+    </div>
+    
+    <audio id="secretAudio">
+        <source src="top_secret.ogg" type="audio/ogg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cloverButton = document.getElementById('cloverButton');
+            const errorImage = document.getElementById('errorImage');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalText = document.getElementById('modalText');
+            const secretAudio = document.getElementById('secretAudio');
+            
+            // Устанавливаем громкость на 50%
+            secretAudio.volume = 0.3;
+            
+            let currentStep = 0;
+            const texts = [
+                "[Вижу, ты попал на несуществующую страницу...?]",
+                "[Что-ж... Здесь делать нечего.]",
+                "[Так что тебе придётся вернутся назад...]"
+            ];
+            
+            // Задержка 1 секунда перед появлением клевера
+            setTimeout(() => {
+                cloverButton.style.opacity = '1';
+            }, 1000);
+            
+            cloverButton.addEventListener('click', function() {
+                // Задержка 2 секунды перед началом эффектов
+                setTimeout(() => {
+                    // Затемняем картинку
+                    errorImage.style.filter = 'brightness(0.7)';
+                    
+                    // Воспроизводим музыку
+                    secretAudio.play();
+                    
+                    // Показываем overlay
+                    modalOverlay.style.pointerEvents = 'all';
+                    modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+                    
+                    // Показываем первый текст
+                    showNextText();
+                }, 500);
+            });
+            
+            function showNextText() {
+                if (currentStep < texts.length) {
+                    modalText.textContent = texts[currentStep];
+                    setTimeout(() => {
+                        modalText.style.opacity = '1';
+                    }, 70);
+                    
+                    currentStep++;
+                } else {
+                    // Завершаем последовательность
+                    hideAll();
+                }
+            }
+            
+            function hideAll() {
+                // Плавно скрываем текст
+                modalText.style.opacity = '0';
+                
+                setTimeout(() => {
+                    // Плавно скрываем overlay
+                    modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+                    modalOverlay.style.pointerEvents = 'none';
+                    
+                    // Плавно возвращаем нормальную яркость картинке
+                    errorImage.style.filter = 'brightness(1)';
+                    
+                    // Плавно скрываем кнопку клевера
+                    cloverButton.style.opacity = '0';
+                    cloverButton.style.pointerEvents = 'none';
+                    
+                    // Плавно останавливаем музыку
+                    fadeOutAudio(secretAudio, 700);
+                    
+                }, 700);
+            }
+            
+            // Функция для плавного уменьшения громкости и остановки аудио
+            function fadeOutAudio(audioElement, duration) {
+                const initialVolume = audioElement.volume;
+                const step = initialVolume / (duration / 50);
+                
+                const fadeInterval = setInterval(() => {
+                    if (audioElement.volume > step) {
+                        audioElement.volume -= step;
+                    } else {
+                        audioElement.volume = 0;
+                        audioElement.pause();
+                        clearInterval(fadeInterval);
+                    }
+                }, 50);
+            }
+            
+            // Обработчик кликов для смены текста
+            modalOverlay.addEventListener('click', function() {
+                if (modalText.style.opacity === '1') {
+                    // Плавно скрываем текущий текст
+                    modalText.style.opacity = '0';
+                    
+                    // Через 0.7 секунды показываем следующий текст
+                    setTimeout(showNextText, 500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
