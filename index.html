@@ -3096,15 +3096,6 @@
             const tabsContainer = document.getElementById('canvasTabs');
             tabsContainer.innerHTML = '';
             
-            // Добавить счетчик холстов
-            const counter = document.createElement('div');
-            counter.style.color = '#a0a0a0';
-            counter.style.fontSize = '0.8em';
-            counter.style.textAlign = 'center';
-            counter.style.marginBottom = '5px';
-            counter.textContent = `Холсты: ${pixelCanvases.length}/${MAX_CANVASES}`;
-            tabsContainer.appendChild(counter);
-            
             pixelCanvases.forEach((canvas, index) => {
                 const tab = document.createElement('div');
                 tab.className = `canvas-tab ${index === currentCanvasIndex ? 'active' : ''}`;
@@ -3112,16 +3103,6 @@
                 tab.onclick = () => switchCanvas(index);
                 tabsContainer.appendChild(tab);
             });
-            
-            // Добавить визуальное обозначение если достигнут лимит
-            if (pixelCanvases.length >= MAX_CANVASES) {
-                const limitInfo = document.createElement('div');
-                limitInfo.style.color = '#e74c3c';
-                limitInfo.style.fontSize = '0.7em';
-                limitInfo.style.marginTop = '5px';
-                limitInfo.textContent = 'Лимит достигнут';
-                tabsContainer.appendChild(limitInfo);
-            }
         }
 
         // Сохранение рисунка
